@@ -8,6 +8,7 @@ Bignum::Bignum(int64_t n)
     {
         sign = Sign::zero;
         size = 0;
+        isLastBitOne = false;
         return;
     }
 
@@ -18,6 +19,7 @@ Bignum::Bignum(int64_t n)
         {
             size = 63;
             _v = {63};
+            isLastBitOne = true;
             return;
         }
         n = -n;
@@ -31,6 +33,7 @@ Bignum::Bignum(int64_t n)
     n /= 2;
     size = 1;
     _v = {1};
+    isLastBitOne = b;
     while (n > 0)
     {
         ++size;
@@ -84,6 +87,7 @@ Bignum::Bignum(std::string::const_iterator first,
                 assert(next(first) == last);
                 sign = Sign::zero;
                 size = 0;
+                isLastBitOne = false;
                 return;
             }
             assert(*first == '1');
@@ -125,6 +129,7 @@ Bignum::Bignum(std::string::const_iterator first,
                 ++size;
                 ++first;
             }
+            isLastBitOne = b;
             return;
         }
         default:

@@ -96,17 +96,24 @@ void testStringIO(const string &s)
     cout << setw(s.size() + 1) << Bignum(s).to_string() << "\n\n";
 }
 
+void testLeftMove(const Bignum &bignum, size_t n)
+{
+    cout << bignum.to_string() << ' ' << n << '\n';
+    cout << (bignum << n).to_string() << "\n\n";
+}
+
 int main(int argc, char const *argv[])
 {
-    for (auto &s : testcaseBinStr())
+    for (size_t i = 0; i < 100; i++)
     {
-        testStringIO(s);
+        testLeftMove(Bignum::random(0, 20), randomInteger(0, 10));
     }
-    string s;
-    while (cin >> s)
-    {
-        testStringIO(s);
-    }
+
+    // string s;
+    // while (cin >> s)
+    // {
+    //     testStringIO(s);
+    // }
 
     return 0;
 }

@@ -4,6 +4,7 @@
 #include <list>
 #include <limits>
 #include <string>
+#include <random>
 
 class Bignum
 {
@@ -21,10 +22,46 @@ private:
     Sign sign = Sign::zero;
     size_t size = 0;
     std::list<unsigned> _v;
+    bool isLastBitOne = true;
 
     std::string uTo_string(size_t base = 2) const;
 
 public:
+    static Bignum random(size_t minSize, size_t maxSize)
+    {
+        static std::default_random_engine e;
+        auto size = std::uniform_int_distribution<size_t>(
+            minSize,
+            maxSize)(e);
+        static std::uniform_int_distribution<int> ranBit(0, 1);
+        if (size == 0)
+        {
+            return Bignum();
+        }
+        else
+        {
+            Bignum bignum;
+            bignum.sign = ranBit(e) == 0 ? Sign::positive : Sign::negative;
+            bignum._v = {1};
+            bool b = true;
+            bignum.size = size;
+            for (size_t i = 1; i < size; ++i)
+            {
+                if (ranBit(e) == b)
+                {
+                    ++bignum._v.back();
+                }
+                else
+                {
+                    bignum._v.push_back(1);
+                    b = !b;
+                }
+            }
+            bignum.isLastBitOne = b;
+            return bignum;
+        }
+    }
+
     Bignum(int64_t n = 0);
 
     Bignum(std::string::const_iterator first,
@@ -39,6 +76,30 @@ public:
                  isSigned){};
 
     std::string to_string(size_t base = 2) const;
+
+    void operator<<=(size_t n)
+    {
+        if (sign != Sign::zero)
+        {
+            ++size;
+            if (isLastBitOne)
+            {
+                _v.push_back(n);
+                isLastBitOne = false;
+            }
+            else
+            {
+                _v.back() += n;
+            }
+        }
+    }
+
+    Bignum operator<<(size_t n) const
+    {
+        Bignum result = *this;
+        result <<= n;
+        return result;
+    }
 };
 
 #endif
