@@ -1,5 +1,7 @@
 #include "Bignum.h"
 
+#include <limits>
+
 Bignum::Bignum(int64_t n)
 {
     if (n == 0)
@@ -12,6 +14,12 @@ Bignum::Bignum(int64_t n)
     if (n < 0)
     {
         sign = Sign::negative;
+        if (n == std::numeric_limits<int64_t>::min())
+        {
+            size = 63;
+            _v = {63};
+            return;
+        }
         n = -n;
     }
     else

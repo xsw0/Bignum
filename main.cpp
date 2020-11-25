@@ -3,13 +3,14 @@
 #include <limits>
 #include <bitset>
 #include <vector>
+#include <iomanip>
 
 #include "Bignum.h"
 
 using namespace std;
 
 static std::default_random_engine random_engine;
-template <typename T = int8_t>
+template <typename T = int64_t>
 T randomInteger()
 {
     static std::uniform_int_distribution<T>
@@ -18,13 +19,11 @@ T randomInteger()
     return uniform_dist(random_engine);
 }
 
-const vector<int8_t> testcaseInteger = [] {
-    vector<int8_t> testcase =
-        {0, 1, -1, 127, -128,
-         0b10,
-         0b11111,
-         0b111000,
-         0b101010};
+const vector<int64_t> testcaseInteger = [] {
+    vector<int64_t> testcase =
+        {0, 1, -1};
+    testcase.push_back(numeric_limits<int64_t>::min());
+    testcase.push_back(numeric_limits<int64_t>::max());
     while (testcase.size() < 100)
     {
         testcase.push_back(randomInteger());
@@ -43,24 +42,32 @@ const vector<int8_t> testcaseInteger = [] {
 //     return testcase;
 // }();
 
-void testBignumIO(int8_t n)
+template <typename T = int64_t>
+void testBignumIO(T n)
 {
-    cout << bitset<8>(n) << '\n'
-         << (n < 0 ? 1 : 0) << bitset<7>(abs(n)) << '\n'
-         << Bignum(n).to_string() << "\n\n";
+    // cout << ' ' << bitset<64>(n) << '\n';
+    if (n == numeric_limits<int64_t>::min())
+    {
+        cout << string(64, '1') << '\n';
+    }
+    else
+    {
+        cout << (n < 0 ? 1 : 0) << bitset<63>(abs(n)) << '\n';
+    }
+    cout << setw(64) << Bignum(n).to_string() << "\n\n";
 }
 
 int main(int argc, char const *argv[])
 {
-    // for (auto n : testcaseInteger)
-    // {
-    //     testBignumIO(n);
-    // }
-    int n;
-    while (cin >> n)
+    for (auto n : testcaseInteger)
     {
         testBignumIO(n);
     }
+    // int n;
+    // while (cin >> n)
+    // {
+    //     testBignumIO(n);
+    // }
 
     return 0;
 }

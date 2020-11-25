@@ -15,8 +15,7 @@ public:
         negative = -1
     };
 
-    using value_type = std::uint8_t;
-    static constexpr size_t value_width = 8;
+    using value_type = std::uint32_t;
 
 private:
     Sign sign = Sign::zero;
