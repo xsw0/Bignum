@@ -111,10 +111,11 @@ void testRightMove(const Bignum &bignum, size_t n)
 
 int main(int argc, char const *argv[])
 {
-    for (size_t i = 0; i < 100; i++)
-    {
-        testRightMove(Bignum::random(0, 20), randomInteger(0, 10));
-    }
+    cout << +(-2) << endl;
+    // for (size_t i = 0; i < 100; i++)
+    // {
+    //     testRightMove(Bignum::random(0, 20), randomInteger(0, 10));
+    // }
 
     // string s;
     // while (cin >> s)
