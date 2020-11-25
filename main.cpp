@@ -11,12 +11,11 @@ using namespace std;
 
 static std::default_random_engine random_engine;
 template <typename T = int64_t>
-T randomInteger()
+T randomInteger(T lower_bound = numeric_limits<T>::min(), T upper_bound = numeric_limits<T>::max())
 {
-    static std::uniform_int_distribution<T>
-        uniform_dist(numeric_limits<T>::min(),
-                     numeric_limits<T>::max());
-    return uniform_dist(random_engine);
+    return std::uniform_int_distribution<T>(
+        lower_bound,
+        upper_bound)(random_engine);
 }
 
 const vector<int64_t> testcaseInteger = [] {
@@ -57,17 +56,57 @@ void testBignumIO(T n)
     cout << setw(64) << Bignum(n).to_string() << "\n\n";
 }
 
+std::string random_bin_str()
+{
+    string s;
+    switch (randomInteger(0, 2))
+    {
+    case 1:
+        s = "-1";
+        break;
+    case 2:
+        s = "+1";
+        break;
+    default:
+        s = "1";
+        break;
+    }
+
+    for (size_t i = 0, size = randomInteger<size_t>(0, 80); i < size; i++)
+    {
+        s.push_back('0' + randomInteger(0, 1));
+    }
+    return s;
+}
+
+vector<std::string> testcaseBinStr()
+{
+    vector<std::string> result{
+        "0", "+0", "-0", "1", "+1", "-1"};
+    while (result.size() < 100)
+    {
+        result.push_back(random_bin_str());
+    }
+    return result;
+}
+
+void testStringIO(const string &s)
+{
+    cout << '"' << s << '"' << '\n';
+    cout << setw(s.size() + 1) << Bignum(s).to_string() << "\n\n";
+}
+
 int main(int argc, char const *argv[])
 {
-    for (auto n : testcaseInteger)
+    for (auto &s : testcaseBinStr())
     {
-        testBignumIO(n);
+        testStringIO(s);
     }
-    // int n;
-    // while (cin >> n)
-    // {
-    //     testBignumIO(n);
-    // }
+    string s;
+    while (cin >> s)
+    {
+        testStringIO(s);
+    }
 
     return 0;
 }
