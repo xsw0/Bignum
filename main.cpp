@@ -102,11 +102,18 @@ void testLeftMove(const Bignum &bignum, size_t n)
     cout << (bignum << n).to_string() << "\n\n";
 }
 
+void testRightMove(const Bignum &bignum, size_t n)
+{
+    string s = bignum.to_string();
+    cout << s << '\n';
+    cout << (bignum >> n).to_string() << ' ' << n << "\n\n";
+}
+
 int main(int argc, char const *argv[])
 {
     for (size_t i = 0; i < 100; i++)
     {
-        testLeftMove(Bignum::random(0, 20), randomInteger(0, 10));
+        testRightMove(Bignum::random(0, 20), randomInteger(0, 10));
     }
 
     // string s;

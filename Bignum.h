@@ -22,7 +22,7 @@ private:
     Sign sign = Sign::zero;
     size_t size = 0;
     std::list<unsigned> _v;
-    bool isLastBitOne = true;
+    bool isLastBitOne = false;
 
     std::string uTo_string(size_t base = 2) const;
 
@@ -94,10 +94,39 @@ public:
         }
     }
 
+    void operator>>=(size_t n)
+    {
+        if (size > n)
+        {
+            size -= n;
+            while (n >= _v.back())
+            {
+                n -= _v.back();
+                _v.pop_back();
+                isLastBitOne = !isLastBitOne;
+            }
+            _v.back() -= n;
+        }
+        else
+        {
+            size = 0;
+            sign = Sign::zero;
+            isLastBitOne = false;
+            _v.clear();
+        }
+    }
+
     Bignum operator<<(size_t n) const
     {
         Bignum result = *this;
         result <<= n;
+        return result;
+    }
+
+    Bignum operator>>(size_t n) const
+    {
+        Bignum result = *this;
+        result >>= n;
         return result;
     }
 };
