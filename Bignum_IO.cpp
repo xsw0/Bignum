@@ -7,8 +7,8 @@ Bignum::Bignum(int64_t n)
     if (n == 0)
     {
         sign = Sign::zero;
-        size = 0;
-        isLastBitOne = false;
+        precision = 0;
+        floating_point = 0;
         return;
     }
 
@@ -17,9 +17,9 @@ Bignum::Bignum(int64_t n)
         sign = Sign::negative;
         if (n == std::numeric_limits<int64_t>::min())
         {
-            size = 63;
+            precision = 63;
+            floating_point = 0;
             _v = {63};
-            isLastBitOne = true;
             return;
         }
         n = -n;
@@ -29,14 +29,20 @@ Bignum::Bignum(int64_t n)
         sign = Sign::positive;
     }
 
-    bool b = n % 2 != 0;
-    n /= 2;
-    size = 1;
+    floating_point = 0;
+    while (n % 2 == 0)
+    {
+        ++floating_point;
+        n >>= 1;
+    }
+
+    bool b = true;
+    n >>= 1;
+    precision = 1;
     _v = {1};
-    isLastBitOne = b;
     while (n > 0)
     {
-        ++size;
+        ++precision;
         if ((n % 2 != 0) == b)
         {
             ++_v.front();
@@ -46,7 +52,7 @@ Bignum::Bignum(int64_t n)
             b = !b;
             _v.push_front(1);
         }
-        n /= 2;
+        n >>= 1;
     };
 }
 
@@ -86,13 +92,24 @@ Bignum::Bignum(std::string::const_iterator first,
             {
                 assert(next(first) == last);
                 sign = Sign::zero;
-                size = 0;
-                isLastBitOne = false;
+                precision = 0;
+                floating_point = 0;
                 return;
             }
             assert(*first == '1');
+            floating_point = 0;
+
+            --last;
+            while (*last == '0')
+            {
+                --last;
+                ++floating_point;
+            }
+            assert(*last == '1');
+            ++last;
+
             sign = Sign::positive;
-            size = 1;
+            precision = 1;
             _v = {1};
             ++first;
             bool b = true;
@@ -126,10 +143,9 @@ Bignum::Bignum(std::string::const_iterator first,
                     assert(0);
                     break;
                 }
-                ++size;
+                ++precision;
                 ++first;
             }
-            isLastBitOne = b;
             return;
         }
         default:
@@ -151,7 +167,7 @@ std::string Bignum::uTo_string(size_t base) const
         }
 
         std::string result;
-        result.reserve(size);
+        result.reserve(precision);
         value_type count = 0;
         bool b = true;
         for (auto i : _v)
@@ -160,6 +176,8 @@ std::string Bignum::uTo_string(size_t base) const
             result.resize(count, b ? '1' : '0');
             b = !b;
         }
+        assert(floating_point >= 0);
+        result.resize(count + floating_point, '0');
         return result;
     }
     default:
