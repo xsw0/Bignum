@@ -1,59 +1,62 @@
 #include "Bignum.h"
 
-#include <limits>
+#include <bitset>
+
+Bignum::Bignum(uint64_t n)
+{
+    switch (n)
+    {
+    case 0:
+    {
+        *this = Bignum();
+        return;
+    }
+    default:
+    {
+        sign = Sign::positive;
+
+        std::bitset<64> bs = n;
+
+        exponents = 63;
+        while (!bs[exponents])
+        {
+            --exponents;
+        }
+
+        for (size_t i = 0; i <= exponents; ++i)
+        {
+            if (bs[i])
+            {
+                fraction.push_front(exponents - i);
+            }
+        }
+        return;
+    }
+    }
+}
 
 Bignum::Bignum(int64_t n)
 {
-    if (n == 0)
+    switch (n)
     {
-        sign = Sign::zero;
-        precision = 0;
-        floating_point = 0;
+    case 0:
+        *this = Bignum();
+        return;
+    case std::numeric_limits<int64_t>::min():
+        sign = Sign::negative;
+        exponents = 62;
+        for (uint i = 0; i < 63; ++i)
+        {
+            fraction.push_back(i);
+        }
+        return;
+    default:
+    {
+        *this = Bignum(static_cast<uint64_t>(n < 0 ? -n : n));
+        sign = n < 0 ? Sign::negative : Sign::positive;
         return;
     }
-
-    if (n < 0)
-    {
-        sign = Sign::negative;
-        if (n == std::numeric_limits<int64_t>::min())
-        {
-            precision = 63;
-            floating_point = 0;
-            _v = {63};
-            return;
-        }
-        n = -n;
     }
-    else
-    {
-        sign = Sign::positive;
-    }
-
-    floating_point = 0;
-    while (n % 2 == 0)
-    {
-        ++floating_point;
-        n >>= 1;
-    }
-
-    bool b = true;
-    n >>= 1;
-    precision = 1;
-    _v = {1};
-    while (n > 0)
-    {
-        ++precision;
-        if ((n % 2 != 0) == b)
-        {
-            ++_v.front();
-        }
-        else
-        {
-            b = !b;
-            _v.push_front(1);
-        }
-        n >>= 1;
-    };
 }
 
 Bignum::Bignum(std::string::const_iterator first,
@@ -67,18 +70,15 @@ Bignum::Bignum(std::string::const_iterator first,
         switch (*first)
         {
         case '+':
-            *this = std::move(Bignum(next(first), last, base, false));
+            *this = Bignum(next(first), last, base, false);
             return;
         case '-':
-            *this = std::move(Bignum(next(first), last, base, false));
-            if (sign == Sign::positive)
-            {
-                sign = Sign::negative;
-            }
+            *this = Bignum(next(first), last, base, false);
+            sign = -sign;
             return;
         default:
             assert(std::isdigit(*first));
-            *this = std::move(Bignum(first, last, base, false));
+            *this = Bignum(first, last, base, false);
             return;
         }
     }
@@ -91,59 +91,22 @@ Bignum::Bignum(std::string::const_iterator first,
             if (*first == '0')
             {
                 assert(next(first) == last);
-                sign = Sign::zero;
-                precision = 0;
-                floating_point = 0;
+                *this = Bignum();
                 return;
             }
             assert(*first == '1');
-            floating_point = 0;
-
-            --last;
-            while (*last == '0')
-            {
-                --last;
-                ++floating_point;
-            }
-            assert(*last == '1');
-            ++last;
-
+            exponents = 0;
             sign = Sign::positive;
-            precision = 1;
-            _v = {1};
+            fraction.push_back(0);
             ++first;
-            bool b = true;
             while (first != last)
             {
-                switch (*first)
+                assert(*first == '0' || *first == '1');
+                ++exponents;
+                if (*first == '1')
                 {
-                case '0':
-                    if (b)
-                    {
-                        _v.push_back(1);
-                        b = false;
-                    }
-                    else
-                    {
-                        ++_v.back();
-                    }
-                    break;
-                case '1':
-                    if (b)
-                    {
-                        ++_v.back();
-                    }
-                    else
-                    {
-                        _v.push_back(1);
-                        b = true;
-                    }
-                    break;
-                default:
-                    assert(0);
-                    break;
+                    fraction.push_back(exponents);
                 }
-                ++precision;
                 ++first;
             }
             return;
@@ -167,17 +130,11 @@ std::string Bignum::uTo_string(size_t base) const
         }
 
         std::string result;
-        result.reserve(precision);
-        value_type count = 0;
-        bool b = true;
-        for (auto i : _v)
+        result.resize(exponents + 1, '0');
+        for (auto index : fraction)
         {
-            count += i;
-            result.resize(count, b ? '1' : '0');
-            b = !b;
+            result[index] = '1';
         }
-        assert(floating_point >= 0);
-        result.resize(count + floating_point, '0');
         return result;
     }
     default:

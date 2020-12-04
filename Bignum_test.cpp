@@ -1,8 +1,8 @@
 #include "Bignum_test.h"
 
-#include <numeric>
-#include <limits>
-#include <bitset>
+// #include <numeric>
+// #include <limits>
+// #include <bitset>
 #include <iostream>
 #include <iomanip>
 
@@ -43,16 +43,28 @@ namespace BIGNUM_TEST
         std::cout << std::setw(s.size() + 1) << Bignum(s).to_string() << "\n\n";
     }
 
-    void testLeftMove(const std::pair<Bignum, size_t> &p)
+    void testLeftMove(const Bignum &bignum, size_t size);
+    void testRightMove(const Bignum &bignum, size_t size);
+
+    void testThree_wayComparison(const Bignum &lhs, const Bignum &rhs);
+
+    void testLeftMove(const Bignum &bignum, size_t size)
     {
-        std::cout << p.first.to_string() << ' ' << p.second << '\n';
-        std::cout << (p.first << p.second).to_string() << "\n\n";
+        std::cout << bignum << ' ' << size << '\n';
+        std::cout << (bignum << size) << "\n\n";
     }
 
-    void testRightMove(const std::pair<Bignum, size_t> &p)
+    void testRightMove(const Bignum &bignum, size_t size)
     {
-        std::string s = p.first;
-        std::cout << s << '\n';
-        std::cout << (p.first >> p.second).to_string() << ' ' << p.second << "\n\n";
+        std::cout << bignum << '\n';
+        std::cout << (bignum >> size) << ' ' << size << "\n\n";
+    }
+
+    void testThree_wayComparison(const Bignum &lhs, const Bignum &rhs)
+    {
+        auto order = lhs <=> rhs;
+        std::cout << lhs << '\n'
+                  << order << '\n'
+                  << rhs << "\n\n";
     }
 } // namespace BIGNUM_TEST
