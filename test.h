@@ -3,45 +3,97 @@
 
 #include <random>
 #include <array>
+#include <any>
+#include <algorithm>
+#include <iostream>
+#include <utility>
 
 namespace TEST
 {
-    constexpr size_t testCount = 0x20;
+    constexpr size_t defaultTestCount = 0x20;
+
+    template <size_t Size = defaultTestCount, typename T>
+    const std::array<T, Size> constant(T value)
+    {
+        std::array<T, Size> result;
+        result.fill(value);
+        return result;
+    }
+
+    template <size_t Count, size_t Size, typename T>
+    const std::array<T, Size> repeat(const std::array<T, Size> &arr)
+    {
+        std::array<T, Size> result;
+        for (size_t i = 0; i < Size; ++i)
+        {
+            result[i] = arr[i % Count];
+        }
+        return result;
+    }
+
+    template <typename T>
+    void print(T v)
+    {
+        std::cout << v << '\n';
+    }
 
     std::default_random_engine &random_engine();
 
-    template <typename T>
-    T randomInteger(T lower_bound = std::numeric_limits<T>::min(),
-                    T upper_bound = std::numeric_limits<T>::max())
+    template <typename Integer>
+    Integer randomInteger(Integer lower_bound, Integer upper_bound)
     {
-        return std::uniform_int_distribution<T>(
+        return std::uniform_int_distribution<Integer>(
             lower_bound,
             upper_bound)(random_engine());
     }
 
-    template <typename T, size_t SIZE = testCount>
-    const std::array<T, SIZE> integerCase = [] {
-        std::vector<T> v{
+    template <typename Integer>
+    Integer randomInteger(Integer upper_bound)
+    {
+        return randomInteger(0, upper_bound);
+    }
+
+    template <typename Integer>
+    Integer randomInteger()
+    {
+        return randomInteger(std::numeric_limits<Integer>::min(), std::numeric_limits<Integer>::max());
+    }
+
+    template <typename Integer, size_t Size = defaultTestCount>
+    const std::array<Integer, Size> integerCase = [] {
+        std::vector<Integer> v{
             0, -1, 1,
-            std::numeric_limits<T>::min(),
-            std::numeric_limits<T>::max()};
-        while (v.size() < SIZE)
+            std::numeric_limits<Integer>::min(),
+            std::numeric_limits<Integer>::max()};
+        while (v.size() < Size)
         {
-            auto r = randomInteger<T>(0, std::numeric_limits<T>::max());
+            auto r = randomInteger<Integer>(0, std::numeric_limits<Integer>::max());
             v.push_back(-r);
             v.push_back(r);
         }
-        std::array<T, SIZE> result;
-        std::move(v.begin(), v.begin() + SIZE, result.begin());
+        std::array<Integer, Size> result;
+        std::move(v.begin(), v.begin() + Size, result.begin());
         return result;
     }();
 
-    template <typename Function, typename Cases>
-    void test(Function f, const Cases &cases)
-    {
-        for (const auto &c : cases)
+    template <typename T, T Start = 0, size_t Size = defaultTestCount>
+    const std::array<T, Size> integerStart = [] {
+        std::array<T, Size> result;
+        T start = Start;
+        for (auto &n : result)
         {
-            f(c);
+            n = start;
+            ++start;
+        }
+        return result;
+    }();
+
+    template <typename Function, size_t Size, typename... Types>
+    void test(Function f, std::array<Types, Size>... args)
+    {
+        for (size_t i = 0; i < Size; ++i)
+        {
+            f(args[i]...);
         }
     }
 } // namespace TEST
