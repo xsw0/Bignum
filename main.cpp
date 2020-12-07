@@ -33,9 +33,14 @@ int main(int argc, char const *argv[])
     //     BIGNUM_TEST::testLeftMove,
     //     BIGNUM_TEST::BignumCase<>,
     //     TEST::repeat<8>(TEST::integerStart<size_t>));
+    // TEST::test(
+    //     BIGNUM_TEST::testRightMove,
+    //     BIGNUM_TEST::BignumCase<>,
+    //     TEST::repeat<8>(TEST::integerStart<size_t>));
+    auto t = TEST::x(BIGNUM_TEST::BignumCase<8>);
     TEST::test(
-        BIGNUM_TEST::testRightMove,
-        BIGNUM_TEST::BignumCase<>,
-        TEST::repeat<8>(TEST::integerStart<size_t>));
+        BIGNUM_TEST::testThree_wayComparison,
+        std::get<0>(t),
+        std::get<1>(t));
     return 0;
 }

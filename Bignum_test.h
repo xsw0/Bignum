@@ -29,7 +29,7 @@ namespace BIGNUM_TEST
         std::array<Bignum, Size> result;
         for (size_t i = 0; i < Size; ++i)
         {
-            result[i] = Bignum::random(i, i);
+            result[i] = binaryStringCase<Size>[i];
         }
         return result;
     }();
