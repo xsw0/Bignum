@@ -18,17 +18,24 @@ Bignum::Bignum(uint64_t n)
         std::bitset<64> bs = n;
 
         exponents = 63;
+
         while (!bs[exponents])
         {
             --exponents;
         }
 
-        for (size_t i = 0; i <= exponents; ++i)
+        bool preBit = true;
+        for (sint i = 1; i <= exponents; ++i)
         {
-            if (bs[i])
+            if (bs[exponents - i] != preBit)
             {
-                fraction.push_front(exponents - i);
+                fraction.push_back(i - 1);
+                preBit = bs[exponents - i];
             }
+        }
+        if (preBit)
+        {
+            fraction.push_back(exponents);
         }
         return;
     }
@@ -45,10 +52,7 @@ Bignum::Bignum(int64_t n)
     case std::numeric_limits<int64_t>::min():
         sign = Sign::negative;
         exponents = 62;
-        for (uint i = 0; i < 63; ++i)
-        {
-            fraction.push_back(i);
-        }
+        fraction = {62};
         return;
     default:
     {
@@ -97,17 +101,22 @@ Bignum::Bignum(std::string::const_iterator first,
             assert(*first == '1');
             exponents = 0;
             sign = Sign::positive;
-            fraction.push_back(0);
             ++first;
+            bool preBit = true;
             while (first != last)
             {
                 assert(*first == '0' || *first == '1');
-                ++exponents;
-                if (*first == '1')
+                if (*first - '0' != preBit)
                 {
                     fraction.push_back(exponents);
+                    preBit = !preBit;
                 }
+                ++exponents;
                 ++first;
+            }
+            if (preBit)
+            {
+                fraction.push_back(exponents);
             }
             return;
         }
@@ -130,11 +139,15 @@ std::string Bignum::uTo_string(size_t base) const
         }
 
         std::string result;
-        result.resize(exponents + 1, '0');
+        assert(exponents >= fraction.back());
+        bool b = true;
         for (auto index : fraction)
         {
-            result[index] = '1';
+            result.resize(index + 1, '0' + b);
+            b = !b;
         }
+        assert(!b);
+        result.resize(exponents + 1, '0');
         return result;
     }
     default:

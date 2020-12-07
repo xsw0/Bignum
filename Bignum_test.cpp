@@ -1,8 +1,5 @@
 #include "Bignum_test.h"
 
-// #include <numeric>
-// #include <limits>
-// #include <bitset>
 #include <iostream>
 #include <iomanip>
 
@@ -42,11 +39,6 @@ namespace BIGNUM_TEST
         std::cout << '"' << s << '"' << '\n';
         std::cout << std::setw(s.size() + 1) << Bignum(s).to_string() << "\n\n";
     }
-
-    void testLeftMove(const Bignum &bignum, size_t size);
-    void testRightMove(const Bignum &bignum, size_t size);
-
-    void testThree_wayComparison(const Bignum &lhs, const Bignum &rhs);
 
     void testLeftMove(const Bignum &bignum, size_t size)
     {

@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <iostream>
 #include <utility>
+#include <tuple>
 
 namespace TEST
 {
@@ -95,6 +96,27 @@ namespace TEST
         {
             f(args[i]...);
         }
+    }
+
+    template <typename Types, size_t Size>
+    std::tuple<
+        std::array<Types, Size * Size>,
+        std::array<Types, Size * Size>>
+    x(const std::array<Types, Size> &arg)
+    {
+        std::tuple<
+            std::array<Types, Size * Size>,
+            std::array<Types, Size * Size>>
+            result;
+        for (size_t i = 0; i < Size; ++i)
+        {
+            for (size_t j = 0; j < Size; ++j)
+            {
+                std::get<0>(result)[i * Size + j] = arg[i];
+                std::get<1>(result)[i * Size + j] = arg[j];
+            }
+        }
+        return result;
     }
 } // namespace TEST
 

@@ -10,6 +10,7 @@ void Bignum::operator<<=(size_t n)
 
 void Bignum::operator>>=(size_t n)
 {
+    assert(exponents >= 0);
     if (exponents < n)
     {
         *this = Bignum();
@@ -19,7 +20,17 @@ void Bignum::operator>>=(size_t n)
         exponents -= n;
         while (fraction.back() > exponents)
         {
-            fraction.pop_back();
+            if (std::next(fraction.crbegin()) == fraction.crend() ||
+                *std::next(fraction.crbegin()) < exponents)
+            {
+                fraction.back() = exponents;
+                break;
+            }
+            else
+            {
+                fraction.pop_back();
+                fraction.pop_back();
+            }
         }
     }
 }

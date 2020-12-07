@@ -30,10 +30,18 @@ inline Sign operator*(Sign lhs, Sign rhs)
 
 inline Sign operator+(Sign lhs, Sign rhs)
 {
-    return static_cast<Sign>(
-        (static_cast<std::underlying_type_t<Sign>>(lhs) +
-         static_cast<std::underlying_type_t<Sign>>(rhs)) /
-        2);
+    switch (static_cast<std::underlying_type_t<Sign>>(lhs) +
+            static_cast<std::underlying_type_t<Sign>>(rhs))
+    {
+    default:
+        return Sign::zero;
+    case 1:
+    case 2:
+        return Sign::positive;
+    case -1:
+    case -2:
+        return Sign::negative;
+    }
 }
 
 inline std::strong_ordering operator<=>(Sign lhs, Sign rhs)
@@ -86,13 +94,12 @@ public:
     static constexpr size_t default_base = 2;
 
 private:
+    // Bignum = 2 ^ exp * (2 - 2^-f[0] + 2^-f[1] - 2^-f[2] ... - 2^f.back())
     Sign sign;
     sint exponents;
     std::list<uint> fraction;
 
 public:
-    static Bignum random(size_t minSize, size_t maxSize);
-
     Bignum(Bignum &&) = default;
     Bignum(const Bignum &) = default;
     Bignum &operator=(Bignum &&) = default;
@@ -149,7 +156,7 @@ public:
         case Sign::negative:
             return 0 <=> uCompare(other);
         default:
-            return 0 <=> 0;
+            return sign <=> other.sign;
         }
     }
 
