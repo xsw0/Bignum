@@ -2,12 +2,7 @@
 #define __TEST_H__
 
 #include <random>
-#include <array>
-#include <any>
-#include <algorithm>
 #include <iostream>
-#include <utility>
-#include <tuple>
 
 namespace TEST
 {

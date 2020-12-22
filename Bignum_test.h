@@ -3,7 +3,6 @@
 
 #include "Bignum.h"
 #include "test.h"
-#include <utility>
 
 namespace BIGNUM_TEST
 {

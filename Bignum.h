@@ -2,9 +2,6 @@
 #define __BIGNUM_H__
 
 #include <list>
-#include <limits>
-#include <string>
-#include <iostream>
 
 #include "compare.h"
 
@@ -91,10 +88,20 @@ class Bignum
 public:
     using sint = std::int64_t;
     using uint = std::uint64_t;
+    // static constexpr size_t size = 64;
     static constexpr size_t default_base = 2;
+    // static constexpr bool bit(uint bits, size_t index)
+    // {
+    //     assert(index < size);
+    //     return !!(bits & (1 << index));
+    // }
+    // static constexpr bool bit(sint bits, size_t index)
+    // {
+    //     return bit(static_cast<uint>(bits), index);
+    // }
 
 private:
-    // Bignum = 2 ^ exp * (2 - 2^-f[0] + 2^-f[1] - 2^-f[2] ... - 2^f.back())
+    // Bignum = sign * 2 ^ exp * (2 - 2^-f[0] + 2^-f[1] - 2^-f[2] + 2^-f[3] ... - 2^-f.back())
     Sign sign;
     sint exponents;
     std::list<uint> fraction;
@@ -167,8 +174,8 @@ public:
     bool operator<=(const Bignum other) const { return operator<=>(other) <= 0; }
     bool operator>=(const Bignum other) const { return operator<=>(other) >= 0; }
 
-    // private:
-    //     void uAddAssign(const Bignum other);
+private:
+    void uAddAssign(const Bignum other);
 
 private:
     std::string uTo_string(size_t base = default_base) const;
