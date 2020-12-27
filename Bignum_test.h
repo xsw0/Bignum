@@ -3,7 +3,6 @@
 
 #include "Bignum.h"
 #include "test.h"
-#include <utility>
 
 namespace BIGNUM_TEST
 {
@@ -26,11 +25,15 @@ namespace BIGNUM_TEST
 
     template <size_t Size = TEST::defaultTestCount>
     std::array<Bignum, Size> BignumCase = [] {
-        std::array<Bignum, Size> result;
+        std::vector<Bignum> v{Bignum()};
         for (size_t i = 0; i < Size; ++i)
         {
-            result[i] = binaryStringCase<Size>[i];
+            std::string s = UnsignedBinaryString(v.size());
+            v.emplace_back("-" + s);
+            v.emplace_back(s);
         }
+        std::array<Bignum, Size> result;
+        std::move(v.begin(), v.begin() + Size, result.begin());
         return result;
     }();
 
@@ -41,6 +44,8 @@ namespace BIGNUM_TEST
     void testRightMove(const Bignum &bignum, size_t size);
 
     void testThree_wayComparison(const Bignum &lhs, const Bignum &rhs);
+
+    void testuAdd(const Bignum &lhs, const Bignum &rhs);
 } // namespace BIGNUM_TEST
 
 #endif
