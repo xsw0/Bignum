@@ -133,11 +133,10 @@ std::string Bignum::uTo_string(size_t base) const
     {
     case 2:
     {
-        if (sign == Sign::zero)
+        if (fraction.empty())
         {
             return "0";
         }
-
         std::string result;
         assert(exponents >= fraction.back());
         bool b = true;

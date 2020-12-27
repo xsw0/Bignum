@@ -44,6 +44,8 @@ namespace BIGNUM_TEST
     void testRightMove(const Bignum &bignum, size_t size);
 
     void testThree_wayComparison(const Bignum &lhs, const Bignum &rhs);
+
+    void testuAdd(const Bignum &lhs, const Bignum &rhs);
 } // namespace BIGNUM_TEST
 
 #endif

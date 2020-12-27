@@ -59,4 +59,11 @@ namespace BIGNUM_TEST
                   << order << '\n'
                   << rhs << "\n\n";
     }
+
+    void testuAdd(const Bignum &lhs, const Bignum &rhs)
+    {
+        std::cout << std::setw(80) << lhs.uTo_string() << '\n'
+                  << std::setw(80) << rhs.uTo_string() << '\n'
+                  << std::setw(80) << lhs.uAdd(rhs).uTo_string() << "\n\n";
+    }
 } // namespace BIGNUM_TEST
