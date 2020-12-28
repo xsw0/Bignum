@@ -2,6 +2,7 @@
 
 std::strong_ordering Bignum::uCompare(const Bignum other) const
 {
+    assert(!fraction.empty() || fraction.empty() && exponents == 0);
     if (exponents != other.exponents)
     {
         return exponents <=> other.exponents;

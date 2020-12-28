@@ -13,7 +13,7 @@ Bignum::Bignum(uint64_t n)
     }
     default:
     {
-        sign = Sign::positive;
+        sign = BignumNS::Sign::positive;
 
         std::bitset<64> bs = n;
 
@@ -50,14 +50,14 @@ Bignum::Bignum(int64_t n)
         *this = Bignum();
         return;
     case std::numeric_limits<int64_t>::min():
-        sign = Sign::negative;
-        exponents = 62;
-        fraction = {62};
+        sign = BignumNS::Sign::negative;
+        exponents = 63;
+        fraction = {0};
         return;
     default:
     {
         *this = Bignum(static_cast<uint64_t>(n < 0 ? -n : n));
-        sign = n < 0 ? Sign::negative : Sign::positive;
+        sign = n < 0 ? BignumNS::Sign::negative : BignumNS::Sign::positive;
         return;
     }
     }
@@ -100,7 +100,7 @@ Bignum::Bignum(std::string::const_iterator first,
             }
             assert(*first == '1');
             exponents = 0;
-            sign = Sign::positive;
+            sign = BignumNS::Sign::positive;
             ++first;
             bool preBit = true;
             while (first != last)
@@ -129,6 +129,8 @@ Bignum::Bignum(std::string::const_iterator first,
 
 std::string Bignum::uTo_string(size_t base) const
 {
+    assert(!fraction.empty() && fraction.back() <= exponents ||
+           fraction.empty() && exponents == 0);
     switch (base)
     {
     case 2:
@@ -157,22 +159,48 @@ std::string Bignum::uTo_string(size_t base) const
 
 std::string Bignum::to_string(size_t base) const
 {
+    assert(!fraction.empty() && fraction.back() <= exponents ||
+           fraction.empty() && exponents == 0);
     switch (base)
     {
     case 2:
     {
         switch (sign)
         {
-        case Sign::zero:
+        case BignumNS::Sign::zero:
             return "0";
-        case Sign::positive:
+        case BignumNS::Sign::positive:
             return uTo_string(base);
-        case Sign::negative:
+        case BignumNS::Sign::negative:
             return std::string("-" + uTo_string(base));
         }
     }
     default:
         assert(0);
         return "";
+    }
+}
+
+std::string Bignum::to_string(bool showSign, size_t base) const
+{
+    assert(!fraction.empty() && fraction.back() <= exponents ||
+           fraction.empty() && exponents == 0);
+    switch (base)
+    {
+    case 2:
+    {
+        switch (sign)
+        {
+        case BignumNS::Sign::zero:
+            return "0";
+        case BignumNS::Sign::positive:
+            return showSign ? std::string("+" + uTo_string(base)) : uTo_string(base);
+        case BignumNS::Sign::negative:
+            return showSign ? std::string("-" + uTo_string(base)) : uTo_string(base);
+        }
+    }
+    default:
+        assert(0);
+        return {};
     }
 }
