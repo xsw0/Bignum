@@ -33,14 +33,11 @@ namespace BignumNS
         switch (static_cast<std::underlying_type_t<Sign>>(lhs) +
                 static_cast<std::underlying_type_t<Sign>>(rhs))
         {
-        default:
-            return Sign::zero;
-        case 1:
-        case 2:
-            return Sign::positive;
-        case -1:
-        case -2:
-            return Sign::negative;
+            default:return Sign::zero;
+            case 1:
+            case 2:return Sign::positive;
+            case -1:
+            case -2:return Sign::negative;
         }
     }
 
@@ -107,30 +104,29 @@ public:
     Bignum(const Bignum &) = default;
     Bignum &operator=(Bignum &&) = default;
     Bignum &operator=(const Bignum &) = default;
+    Bignum() : sign(BignumNS::Sign::zero), exponents(0) {};
 
-    Bignum() : sign(BignumNS::Sign::zero), exponents(0){};
     Bignum(int64_t n);
     Bignum(uint64_t n);
-
-    Bignum(char n) : Bignum(static_cast<int64_t>(n)){};
-    Bignum(short n) : Bignum(static_cast<int64_t>(n)){};
-    Bignum(int n) : Bignum(static_cast<int64_t>(n)){};
-    Bignum(long n) : Bignum(static_cast<int64_t>(n)){};
-    Bignum(unsigned char n) : Bignum(static_cast<uint64_t>(n)){};
-    Bignum(unsigned short n) : Bignum(static_cast<uint64_t>(n)){};
-    Bignum(unsigned int n) : Bignum(static_cast<uint64_t>(n)){};
-    Bignum(unsigned long n) : Bignum(static_cast<uint64_t>(n)){};
+    Bignum(char n) : Bignum(static_cast<int64_t>(n)) {};
+    Bignum(short n) : Bignum(static_cast<int64_t>(n)) {};
+    Bignum(int n) : Bignum(static_cast<int64_t>(n)) {};
+    Bignum(long n) : Bignum(static_cast<int64_t>(n)) {};
+    Bignum(unsigned char n) : Bignum(static_cast<uint64_t>(n)) {};
+    Bignum(unsigned short n) : Bignum(static_cast<uint64_t>(n)) {};
+    Bignum(unsigned int n) : Bignum(static_cast<uint64_t>(n)) {};
+    Bignum(unsigned long n) : Bignum(static_cast<uint64_t>(n)) {};
 
     Bignum(std::string::const_iterator first,
            std::string::const_iterator last,
            size_t base = default_base,
            bool isSigned = true);
 
-    Bignum(std::string s, size_t base = default_base, bool isSigned = true)
+    explicit Bignum(const std::string &s, size_t base = default_base, bool isSigned = true)
         : Bignum(s.cbegin(),
                  s.cend(),
                  base,
-                 isSigned){};
+                 isSigned) {};
 
 private:
     void opposite() { sign = -sign; }
@@ -157,33 +153,30 @@ public:
 
 private:
 public: // for test
-    std::strong_ordering uCompare(const Bignum other) const;
+    std::strong_ordering uCompare(const Bignum &other) const;
 
 public:
-    std::strong_ordering operator<=>(const Bignum other) const
+    std::strong_ordering operator<=>(const Bignum &other) const
     {
         switch (sign + other.sign)
         {
-        case BignumNS::Sign::positive:
-            return uCompare(other);
-        case BignumNS::Sign::negative:
-            return 0 <=> uCompare(other);
-        default:
-            return sign <=> other.sign;
+            case BignumNS::Sign::positive:return uCompare(other);
+            case BignumNS::Sign::negative:return 0 <=> uCompare(other);
+            default:return sign <=> other.sign;
         }
     }
 
-    bool operator==(const Bignum other) const { return operator<=>(other) == 0; }
-    bool operator!=(const Bignum other) const { return operator<=>(other) != 0; }
-    bool operator<(const Bignum other) const { return operator<=>(other) < 0; }
-    bool operator>(const Bignum other) const { return operator<=>(other) > 0; }
-    bool operator<=(const Bignum other) const { return operator<=>(other) <= 0; }
-    bool operator>=(const Bignum other) const { return operator<=>(other) >= 0; }
+    bool operator==(const Bignum &other) const { return operator<=>(other) == 0; }
+    bool operator!=(const Bignum &other) const { return operator<=>(other) != 0; }
+    bool operator<(const Bignum &other) const { return operator<=>(other) < 0; }
+    bool operator>(const Bignum &other) const { return operator<=>(other) > 0; }
+    bool operator<=(const Bignum &other) const { return operator<=>(other) <= 0; }
+    bool operator>=(const Bignum &other) const { return operator<=>(other) >= 0; }
 
 private:
 public: // for test
-    void uAddAssign(const Bignum other);
-    void uSubAssign(const Bignum other);
+    void uAddAssign(const Bignum &other);
+    void uSubAssign(const Bignum &other);
 
 private:
 public: // for test

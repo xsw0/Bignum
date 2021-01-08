@@ -1,13 +1,13 @@
 #include "Bignum.h"
 
-void Bignum::uAddAssign(const Bignum other)
+void Bignum::uAddAssign(const Bignum &other)
 {
     assert(!fraction.empty() ||
            fraction.empty() &&
-               exponents == 0);
+           exponents == 0);
     assert(!other.fraction.empty() ||
            other.fraction.empty() &&
-               other.exponents == 0);
+           other.exponents == 0);
 
     if (other.fraction.empty())
     {
@@ -21,7 +21,8 @@ void Bignum::uAddAssign(const Bignum other)
         return;
     }
 
-    auto reverse = [&](std::list<sint>::iterator it) {
+    auto reverse = [&](std::list<sint>::iterator it)
+    {
         assert(it != fraction.end() && *it > 0);
         if (it != fraction.begin() &&
             *std::prev(it) == *it - 1)
@@ -37,7 +38,8 @@ void Bignum::uAddAssign(const Bignum other)
     auto uAddTerm = [&](std::list<sint>::iterator &it,
                         bool &isLPositive,
                         const sint value,
-                        const bool isRPositive) {
+                        const bool isRPositive)
+    {
         assert(it == fraction.end() || *it > value);
         if (it == fraction.begin())
         {
@@ -101,7 +103,8 @@ void Bignum::uAddAssign(const Bignum other)
     auto itL = fraction.end();
     auto itR = other.fraction.cend();
 
-    auto align = [&](sint offset = 0) {
+    auto align = [&](sint offset = 0)
+    {
         assert(itR != other.fraction.cbegin());
         while (itL != fraction.begin() && *std::prev(itL) > offset + *std::prev(itR))
         {
