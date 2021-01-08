@@ -13,11 +13,6 @@
 
 using namespace std;
 
-float f(int a, double b)
-{
-    return a - b;
-}
-
 int main(int argc, char const *argv[])
 {
     // TEST::test(
