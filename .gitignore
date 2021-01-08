@@ -1,7 +1,7 @@
 
 .DS_Store
+CMakeLists.txt
+.idea
 .vscode
 .macOS
-/cmake-build-debug/
-/.idea/
-CMakeLists.txt
+cmake-build-debug
