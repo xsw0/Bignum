@@ -24,8 +24,8 @@ Bignum::Bignum(uint64_t n)
                 --exponents;
             }
 
-            bool preBit = true;
-            for (sint i = 1; i <= exponents; ++i)
+            bool      preBit = true;
+            for (uint i      = 1; i <= exponents; ++i)
             {
                 if (bs[exponents - i] != preBit)
                 {
@@ -46,11 +46,13 @@ Bignum::Bignum(int64_t n)
 {
     switch (n)
     {
-        case 0:*this = Bignum();
+        case 0:
+            *this = Bignum();
             return;
-        case std::numeric_limits<int64_t>::min():sign = BignumNS::Sign::negative;
+        case std::numeric_limits<int64_t>::min():
+            sign      = BignumNS::Sign::negative;
             exponents = 63;
-            fraction = {0};
+            fraction  = {0};
             return;
         default:
         {
@@ -71,12 +73,15 @@ Bignum::Bignum(std::string::const_iterator first,
     {
         switch (*first)
         {
-            case '+':*this = Bignum(next(first), last, base, false);
+            case '+':
+                *this = Bignum(next(first), last, base, false);
                 return;
-            case '-':*this = Bignum(next(first), last, base, false);
+            case '-':
+                *this = Bignum(next(first), last, base, false);
                 sign = -sign;
                 return;
-            default:assert(std::isdigit(*first));
+            default:
+                assert(std::isdigit(*first));
                 *this = Bignum(first, last, base, false);
                 return;
         }
@@ -95,7 +100,7 @@ Bignum::Bignum(std::string::const_iterator first,
                 }
                 assert(*first == '1');
                 exponents = 0;
-                sign = BignumNS::Sign::positive;
+                sign      = BignumNS::Sign::positive;
                 ++first;
                 bool preBit = true;
                 while (first != last)
@@ -115,7 +120,8 @@ Bignum::Bignum(std::string::const_iterator first,
                 }
                 return;
             }
-            default:assert(0);
+            default:
+                assert(0);
                 return;
         }
     }
@@ -135,7 +141,7 @@ std::string Bignum::uTo_string(size_t base) const
             }
             std::string result;
             assert(exponents >= fraction.back());
-            bool b = true;
+            bool      b = true;
             for (auto index : fraction)
             {
                 result.resize(index + 1, '0' + b);
@@ -145,7 +151,8 @@ std::string Bignum::uTo_string(size_t base) const
             result.resize(exponents + 1, '0');
             return result;
         }
-        default:assert(0);
+        default:
+            assert(0);
             return "";
     }
 }
@@ -160,32 +167,39 @@ std::string Bignum::to_string(size_t base) const
         {
             switch (sign)
             {
-                case BignumNS::Sign::zero:return "0";
-                case BignumNS::Sign::positive:return uTo_string(base);
-                case BignumNS::Sign::negative:return std::string("-" + uTo_string(base));
+                case BignumNS::Sign::zero:
+                    return "0";
+                case BignumNS::Sign::positive:
+                    return uTo_string(base);
+                case BignumNS::Sign::negative:
+                    return std::string("-" + uTo_string(base));
             }
         }
-        default:assert(0);
-            return "";
+        default:
+            assert(0);
+            return {};
     }
 }
 
 std::string Bignum::to_string(bool showSign, size_t base) const
 {
-    assert(!fraction.empty() && fraction.back() <= exponents ||
-           fraction.empty() && exponents == 0);
+    assert(isLegal());
     switch (base)
     {
         case 2:
         {
             switch (sign)
             {
-                case BignumNS::Sign::zero:return "0";
-                case BignumNS::Sign::positive:return showSign ? std::string("+" + uTo_string(base)) : uTo_string(base);
-                case BignumNS::Sign::negative:return showSign ? std::string("-" + uTo_string(base)) : uTo_string(base);
+                case BignumNS::Sign::zero:
+                    return "0";
+                case BignumNS::Sign::positive:
+                    return showSign ? std::string("+" + uTo_string(base)) : uTo_string(base);
+                case BignumNS::Sign::negative:
+                    return showSign ? std::string("-" + uTo_string(base)) : uTo_string(base);
             }
         }
-        default:assert(0);
+        default:
+            assert(0);
             return {};
     }
 }

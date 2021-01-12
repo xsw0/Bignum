@@ -1,22 +1,19 @@
 #include "Bignum.h"
 
-void Bignum::operator<<=(size_t n)
+void Bignum::uLeftMoveAssign(size_t n)
 {
-    assert(!fraction.empty() && fraction.back() <= exponents ||
-           fraction.empty() && exponents == 0);
-    assert(exponents >= 0);
+    assert(isLegalIgnoreSign());
     if (!fraction.empty())
     {
         assert(std::numeric_limits<decltype(exponents)>::max() - exponents >= n);
         exponents += n;
     }
+    assert(isLegalIgnoreSign());
 }
 
-void Bignum::operator>>=(size_t n)
+void Bignum::uRightMoveAssign(size_t n)
 {
-    assert(!fraction.empty() && fraction.back() <= exponents ||
-           fraction.empty() && exponents == 0);
-    assert(exponents >= 0);
+    assert(isLegalIgnoreSign());
     if (exponents < n)
     {
         *this = Bignum();
@@ -39,21 +36,5 @@ void Bignum::operator>>=(size_t n)
             }
         }
     }
-    assert(!fraction.empty() && fraction.back() <= exponents ||
-           fraction.empty() && exponents == 0);
-    assert(exponents >= 0);
-}
-
-Bignum Bignum::operator<<(size_t n) const
-{
-    Bignum result = *this;
-    result <<= n;
-    return result;
-}
-
-Bignum Bignum::operator>>(size_t n) const
-{
-    Bignum result = *this;
-    result >>= n;
-    return result;
+    assert(isLegalIgnoreSign());
 }

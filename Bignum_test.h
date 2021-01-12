@@ -6,7 +6,7 @@
 
 namespace BIGNUM_TEST
 {
-    const std::string UnsignedBinaryString(size_t Size = 0);
+    std::string UnsignedBinaryString(size_t Size = 0);
 
     template<size_t Size = TEST::defaultTestCount>
     std::array<std::string, Size> binaryStringCase = []

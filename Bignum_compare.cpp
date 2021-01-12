@@ -1,8 +1,9 @@
 #include "Bignum.h"
 
-std::strong_ordering Bignum::uCompare(const Bignum other) const
+std::strong_ordering Bignum::uCompare(const Bignum &other) const
 {
-    assert(!fraction.empty() || fraction.empty() && exponents == 0);
+    assert(isLegalIgnoreSign());
+    assert(other.isLegalIgnoreSign());
     if (exponents != other.exponents)
     {
         return exponents <=> other.exponents;

@@ -9,7 +9,7 @@ namespace TEST
     constexpr size_t defaultTestCount = 0x20;
 
     template<size_t Size = defaultTestCount, typename T>
-    const std::array<T, Size> constant(T value)
+    std::array<T, Size> constant(T value)
     {
         std::array<T, Size> result;
         result.fill(value);
@@ -17,7 +17,7 @@ namespace TEST
     }
 
     template<size_t Count, size_t Size, typename T>
-    const std::array<T, Size> repeat(const std::array<T, Size> &arr)
+    std::array<T, Size> repeat(const std::array<T, Size> &arr)
     {
         std::array<T, Size> result;
         for (size_t i = 0; i < Size; ++i)

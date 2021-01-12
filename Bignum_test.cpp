@@ -5,7 +5,7 @@
 
 namespace BIGNUM_TEST
 {
-    const std::string UnsignedBinaryString(size_t size)
+    std::string UnsignedBinaryString(size_t size)
     {
         if (size == 0)
         {
